@@ -1,7 +1,15 @@
 <?php
 
+declare(strict_types=1);
+
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', function () {
-    return view('welcome');
+Route::get('/test', fn () => response()->json([
+    'environment' => app()->environment(),
+]))->name('no-subdomain.test');
+
+Route::domain('test.pest-browser-testing.test')->group(function () {
+    Route::get('/test', fn () => response()->json([
+        'environment' => app()->environment(),
+    ]))->name('subdomain.test');
 });
