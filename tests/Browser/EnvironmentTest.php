@@ -5,13 +5,15 @@ declare(strict_types=1);
 it('serves non-subdomain routes in the correct environment', function () {
     expect(app()->environment())->toBe('testing'); // Passes
 
-    // Visits `http://localhost:<random port>/test`, Passes
-    visit(route('no-subdomain.test'))->assertSee('testing');
+    visit(route('no-subdomain.test'))
+        ->assertHostIs('127.0.0.1') // Passes
+        ->assertSee('testing');     // Passes
 });
 
-it('serves non-subdomain routes in the correct environment', function () {
+it('serves subdomain routes in the correct environment', function () {
     expect(app()->environment())->toBe('testing'); // Passes
 
-    // Visits `http(s)://test.<domain>.<tld>/test`, Fails, displays 'local' instead
-    visit(route('subdomain.test'))->assertSee('testing');
+    visit(route('subdomain.test'))
+        ->assertHostIs('test.'.config('app.domain')) // Passes
+        ->assertSee('testing');                            // Fails, displays 'local' instead
 });
